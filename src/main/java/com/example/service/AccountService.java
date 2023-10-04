@@ -48,4 +48,26 @@ public class AccountService {
             account.setPassword(replacement.getPassword());
         }
     }
+    public Account findByUsername(String username){
+        return accountRepository.findByUsername(username);
+    }
+    
+    public Account registerAccount(Account account) {
+        if (account.getUsername() == null 
+         || account.getPassword().length() < 4) {
+            return null;
+        }
+    
+        
+        Account existingAccount = accountRepository.findByUsername(account.getUsername());
+        if (existingAccount != null) {
+            return null;
+        }
+    
+        Account newAccount = new Account();
+        newAccount.setUsername(account.getUsername());
+        newAccount.setPassword(account.getPassword());
+    
+        return accountRepository.save(newAccount);
+    }
 }
