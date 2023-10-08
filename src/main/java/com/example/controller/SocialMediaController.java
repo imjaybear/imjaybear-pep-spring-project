@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -131,6 +132,17 @@ public ResponseEntity<?> createMessageHandler(@RequestBody Message message) {
     public @ResponseBody ResponseEntity<List<Message>> getMessageByAccountId(@PathVariable int account_id){
         List<Message> messageList = messageService.getMessagesByAccountId(account_id);
         return ResponseEntity.status(200).body(messageList);
+    }
+    
+    // UPDATE MESSAGE BY MESSAGE ID HANDLER
+    @PatchMapping("/messages/{message_id}")
+    public @ResponseBody ResponseEntity<Integer> updateMessageHandler(@PathVariable int message_id, @RequestBody Message updatedMessage){
+        Message message = messageService.updateMessage(message_id, updatedMessage);
+        if(message != null){
+            String[] lines = message.getMessage_text().split("\r|\n");
+            return ResponseEntity.status(200).body(lines.length);
+        } else
+            return ResponseEntity.status(400).body(0);
     }
     
 }
