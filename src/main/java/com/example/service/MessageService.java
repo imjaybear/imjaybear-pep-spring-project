@@ -58,7 +58,8 @@ public class MessageService {
         if (optionalMessage.isPresent()) {
             Message updatedMessage = optionalMessage.get();
             updatedMessage.setMessage_text(replacement.getMessage_text());
-            return messageRepository.save(updatedMessage);
+            return 
+              messageRepository.save(updatedMessage);
         } else
             return null;
     }
@@ -70,7 +71,8 @@ public class MessageService {
         List<Account> account = accountRepository.findAll();
         for (Account checkedAcount : account) {
             if (checkedAcount.getAccount_id().equals(message.getPosted_by())) {
-                return messageRepository.save(message);
+                return 
+                  messageRepository.save(message);
             }
         }
 
