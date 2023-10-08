@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -111,4 +112,17 @@ public class SocialMediaController {
         // Respond with the created message and HTTP status 200
         return ResponseEntity.status(HttpStatus.OK).body(savedMessage);
     }
+    
+    @GetMapping("/messages/{message_id}")
+    public ResponseEntity<?> retrieveMessageById(@PathVariable("message_id") int messageId) {
+        Optional<Message> optionalMessage = messageService.getMessageById(messageId);
+        if (optionalMessage.isPresent()) {
+            Message foundMessage = optionalMessage.get();
+            return ResponseEntity.status(HttpStatus.OK).body(foundMessage);
+        } else {
+            // Return an empty response with status 200 when no message is found
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+    }
+    
 }

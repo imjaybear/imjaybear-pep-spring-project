@@ -26,20 +26,15 @@ public class MessageService {
         return messageRepository.findAll();
     }
 
-    public Message getMessageById(long id){
-        Optional<Message> optionalMessage = messageRepository.findById(id);
-
-        if(optionalMessage.isPresent()){
-            return optionalMessage.get();
-        } else  
-            return null;
+    public Optional<Message> getMessageById(int id){
+        return messageRepository.findById(id);
     }
 
-    public void deleteStore(long id){
+    public void deleteStore(int id){
         messageRepository.deleteById(id);
     }
 
-    public Message updateMessage(long id, Message replacement){
+    public Message updateMessage(int id, Message replacement){
         Optional<Message> optionalMessage = messageRepository.findById(id);
         Message message = optionalMessage.get();
 
