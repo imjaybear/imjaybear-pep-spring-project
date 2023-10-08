@@ -5,13 +5,20 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.entity.Account;
 import com.example.entity.Message;
+import com.example.repository.AccountRepository;
 import com.example.repository.MessageRepository;
 
 @Service
+@Transactional
 public class MessageService {
+    @Autowired
     MessageRepository messageRepository;
+    @Autowired
+    AccountRepository accountRepository;
 
     @Autowired
     public MessageService(MessageRepository messageRepository) {
@@ -45,4 +52,20 @@ public class MessageService {
         }
         return message;
     }
+
+    public Message createMessage(Message message){
+    if (message.getMessage_text().trim().equals("") || message.getMessage_text().length()>254){
+            return null;
+        }
+        List<Account> account = accountRepository.findAll();
+        for (Account checkedAcount : account){
+            if (checkedAcount.getAccount_id().equals(message.getPosted_by())){
+                return messageRepository.save(message);
+            }
+        }
+        
+            return null;
+        
+    }
+    
 }

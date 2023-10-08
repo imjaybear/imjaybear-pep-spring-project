@@ -26,13 +26,8 @@ public class AccountService {
         return accountRepository.findAll();
     }
 
-    public Account getAccountById(long id) {
-        Optional<Account> optionalAccount = accountRepository.findById(id);
-
-        if (optionalAccount.isPresent()) {
-            return optionalAccount.get();
-        } else
-            return null;
+    public Optional<Account> getAccountById(long id) {
+        return accountRepository.findById(id);
     }
 
     public void deleteAccount(long id){
@@ -70,4 +65,5 @@ public class AccountService {
     
         return accountRepository.save(newAccount);
     }
+    
 }

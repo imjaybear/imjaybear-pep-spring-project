@@ -82,36 +82,18 @@ public class SocialMediaController {
         List<Message> messages = messageService.getAllMessages();
         return ResponseEntity.status(HttpStatus.OK).body(messages);
     }
+    
     @PostMapping("/messages")
-    public ResponseEntity<?> createMessage(@RequestBody Message message) {
-        // Check if message_text is not blank and under 255 characters
-        if (message.getMessage_text() == null || message.getMessage_text().isBlank() || message.getMessage_text().length() > 255) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid message text.");
-        }
+public ResponseEntity<?> createMessage(@RequestBody Message message) {
+  Message createdMessage = messageService.createMessage(message);
+  if(createdMessage != null){
+   return ResponseEntity.status(200).body(createdMessage);
+  } else
+        return ResponseEntity.status(400).build();
+
+}
+
     
-        // Check if posted_by is null
-        if (message.getPosted_by() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user.");
-        }
-    
-        // Check if user with posted_by ID exists
-        Optional<Account> userOptional = accountRepository.findById(message.getPosted_by().longValue());
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User does not exist.");
-        }
-    
-        // Create a new message
-        Message newMessage = new Message();
-        newMessage.setPosted_by(message.getPosted_by());
-        newMessage.setMessage_text(message.getMessage_text());
-        newMessage.setTime_posted_epoch(System.currentTimeMillis()); // You might need logic to set this value
-    
-        // Save the new message to the repository
-        Message savedMessage = messageRepository.save(newMessage);
-    
-        // Respond with the created message and HTTP status 200
-        return ResponseEntity.status(HttpStatus.OK).body(savedMessage);
-    }
     
     @GetMapping("/messages/{message_id}")
     public ResponseEntity<?> retrieveMessageById(@PathVariable("message_id") int messageId) {
