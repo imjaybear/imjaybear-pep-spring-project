@@ -6,11 +6,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -42,8 +44,9 @@ public class SocialMediaController {
         this.accountRepository = accountRepository;
     }
 
+    // REGISTER USER HANDLER
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody Account account) {
+    public ResponseEntity<?> registerUserHandler(@RequestBody Account account) {
         Account createdAccount = accountService.registerAccount(account);
     
         if (createdAccount != null) {
@@ -63,8 +66,10 @@ public class SocialMediaController {
             }
         }
     }
+
+    // LOGIN HANDLER
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody Account account) {
+    public ResponseEntity<?> loginUserHandler(@RequestBody Account account) {
         Account existingAccount = accountRepository.findByUsername(account.getUsername());
     
         if (existingAccount != null && existingAccount.getPassword().equals(account.getPassword())) {
@@ -77,14 +82,17 @@ public class SocialMediaController {
                               .body("Invalid username or password.");
         }
     }
+
+    // RETRIEVE ALL MESSAGES HANDLER
     @GetMapping("/messages")
-    public ResponseEntity<List<Message>> retrieveAllMessages() {
+    public ResponseEntity<List<Message>> retrieveAllMessagesHandler() {
         List<Message> messages = messageService.getAllMessages();
         return ResponseEntity.status(HttpStatus.OK).body(messages);
     }
-    
+
+    // CREATE MESSAGE HANDLER
     @PostMapping("/messages")
-public ResponseEntity<?> createMessage(@RequestBody Message message) {
+public ResponseEntity<?> createMessageHandler(@RequestBody Message message) {
   Message createdMessage = messageService.createMessage(message);
   if(createdMessage != null){
    return ResponseEntity.status(200).body(createdMessage);
@@ -94,9 +102,9 @@ public ResponseEntity<?> createMessage(@RequestBody Message message) {
 }
 
     
-    
+    // RETRIEVE MESSAGE BY ID HANDLER
     @GetMapping("/messages/{message_id}")
-    public ResponseEntity<?> retrieveMessageById(@PathVariable("message_id") int messageId) {
+    public ResponseEntity<?> retrieveMessageByIdHandler(@PathVariable("message_id") int messageId) {
         Optional<Message> optionalMessage = messageService.getMessageById(messageId);
         if (optionalMessage.isPresent()) {
             Message foundMessage = optionalMessage.get();
@@ -105,6 +113,24 @@ public ResponseEntity<?> createMessage(@RequestBody Message message) {
             // Return an empty response with status 200 when no message is found
             return ResponseEntity.status(HttpStatus.OK).build();
         }
+    }
+
+    // DELETE MESSAGE BY ID HANDLER
+    @DeleteMapping("messages/{message_id}")
+    public @ResponseBody ResponseEntity<Integer> deleteMessageByIdHandler(@PathVariable int message_id){
+        Message deletMessage = messageService.deleteMessageById(message_id);
+        if(deletMessage != null){
+            String[] lines = deletMessage.getMessage_text().split("\r|\n");
+            return ResponseEntity.status(200).body(lines.length);
+        } else
+            return ResponseEntity.status(200).body(0);
+    }
+
+    // RETRIEVE MESSAGE BY ACCOUNT ID HANDLER
+    @GetMapping("/accounts/{account_id}/messages")
+    public @ResponseBody ResponseEntity<List<Message>> getMessageByAccountId(@PathVariable int account_id){
+        List<Message> messageList = messageService.getMessagesByAccountId(account_id);
+        return ResponseEntity.status(200).body(messageList);
     }
     
 }
