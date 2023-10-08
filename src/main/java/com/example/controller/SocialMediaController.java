@@ -53,8 +53,8 @@ public class SocialMediaController {
         Account createdAccount = accountService.registerAccount(account);
 
         if (createdAccount != null) {
-            return ResponseEntity.status(HttpStatus.OK)
-                                 .body(createdAccount);
+            return 
+              ResponseEntity.status(HttpStatus.OK).body(createdAccount);
         } else {
             Account existingAccount = accountRepository.findByUsername(account.getUsername());
 
